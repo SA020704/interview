@@ -24,7 +24,7 @@ class AIService:
             # 从 PDF 中提取文本
             resume_content = extract_text_from_pdf(file_content)
             if not resume_content:
-                return Response.error("无法从文件中提取文本内容")
+                return "无法从文件中提取文本内容"
 
             # 获取或创建用户历史记录
             with self.question_history_lock:
@@ -48,7 +48,7 @@ class AIService:
 
         except Exception as e:
             log.error(f"简历分析失败: {e}", exc_info=True)
-            return Response.ok({})
+            return {}
 
     def _extract_resume_content(self, resume_content):
         try:
@@ -60,8 +60,8 @@ class AIService:
                 regex_extractor=self.chatgpt_utils.extract_with_regex
             )
 
-            return Response.ok(result if result else {})
+            return result if result else {}
 
         except Exception as e:
             log.error(f"简历内容提取失败: {e}", exc_info=True)
-            return Response.ok({})
+            return {}
