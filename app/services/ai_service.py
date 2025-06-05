@@ -6,6 +6,7 @@ from datetime import datetime
 
 import pika
 
+from app.dto.AiEvaluationVO import AiEvaluationVO
 from app.utils.ALYAudioConversionUtil import ALYAudioConversionUtil
 from app.utils.pdf_utils import extract_text_from_pdf
 from app.utils.prompt_utils import PromptUtils
@@ -27,10 +28,10 @@ class AIService:
 
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
         self.MIN_ANALYSIS_LENGTH = 150
-        # 线程安全的面试对话文本累积集合
+        # 线程安全的面试对话文本累积集合,用于AI分析给出三道题目
         self._user_text_accumulator = defaultdict(str)
-        # 面试整场对话的文本积累结合
-        self._user_text_accumulator = defaultdict(str)
+        # 面试整场对话的文本积累结合，用于最后的面试总结等
+        self._user_text_total = defaultdict(str)
         # 用于保护累积器的锁
         self._accumulator_lock = threading.RLock()
         # 初始化MQ连接
@@ -107,7 +108,7 @@ class AIService:
             # 音频转文字
             sentence = self.aLYAudioConversionUtil.file_trans(url)
             if not sentence or not sentence.strip():
-                current_accumulated_length = len(self._user_text_accumulator[user_id])
+                current_accumulated_length = len(self._user_text_accumulator[interview_id])
                 log.info(
                     f"文本累积中, interview_id: {interview_id}, 当前长度: {current_accumulated_length}, 需要长度: {self.MIN_ANALYSIS_LENGTH}")
                 return f"文本累积中, interview_id: {interview_id},当前内容为:{sentence}"
@@ -116,6 +117,7 @@ class AIService:
             with self._accumulator_lock:
                 # 累积当前对话的文本
                 self._user_text_accumulator[interview_id] += sentence.strip() + " "
+                self._user_text_total[interview_id] += sentence.strip() + " "
                 current_length = len(self._user_text_accumulator[interview_id])
 
                 # 检查是否达到最小分析长度
@@ -145,6 +147,66 @@ class AIService:
             return [result[i:i + 3] for i in range(0, len(result), 3)]
         except Exception as e:
             log.error(f"获取AI得到的问题: {e}", exc_info=True)
+            return None
+
+    def getAiEvaluation(self, interview_id):
+        """
+        AI面试评价
+        """
+        try:
+            total_text = self._user_text_total[interview_id].strip()
+            res = AiEvaluationVO()
+
+            if total_text and total_text.strip():
+                if len(total_text) > 30000:
+                    total_text = total_text[:30000]  # 防止超过AI上下文最大长度
+
+                # 使用线程池并发执行两个AI任务
+                with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+                    # 提交两个任务
+                    evaluation_future = executor.submit(
+                        self._get_ai_evaluation_task,
+                        total_text
+                    )
+                    qa_future = executor.submit(
+                        self._get_interview_qa_task,
+                        total_text
+                    )
+
+                    # 等待两个任务完成
+                    try:
+                        ai_evaluation_result = evaluation_future.result(timeout=30)  # 30秒超时
+                        interview_qa_result = qa_future.result(timeout=30)  # 30秒超时
+
+                        # 解析并合并结果
+                        res = ChatGptUtils.parse_combined_response(ai_evaluation_result, interview_qa_result)
+                        # 总结完成后清空对话内容
+                        self._user_text_total[interview_id] = ""
+                    except concurrent.futures.TimeoutError:
+                        log.error(f"AI任务执行超时: interview_id={interview_id}")
+                        return AiEvaluationVO()
+
+            return res
+        except Exception as e:
+            log.error(f"获取AI评价失败: {e}", exc_info=True)
+            return AiEvaluationVO()
+
+    def _get_ai_evaluation_task(self, total_text):
+        """AI评价任务"""
+        try:
+            ai_evaluation_prompt = PromptUtils.ai_evaluation_message(total_text)
+            return self.chatgpt_utils.proxy_ms_api(ai_evaluation_prompt)
+        except Exception as e:
+            log.error(f"AI评价任务失败: {e}", exc_info=True)
+            return None
+
+    def _get_interview_qa_task(self, total_text):
+        """面试QA任务"""
+        try:
+            interview_qa_prompt = PromptUtils.interview_qa(total_text)  # 修复：使用正确的方法名
+            return self.chatgpt_utils.proxy_ms_api(interview_qa_prompt)
+        except Exception as e:
+            log.error(f"面试QA任务失败: {e}", exc_info=True)
             return None
 
     def _init_mq_connection(self):

@@ -68,3 +68,18 @@ def getaAudioAnalysisRes():
         return jsonify(Response.ok(result).__dict__)
     except Exception as e:
         return jsonify(Response.error(f"获取AI得到的问题失败: {str(e)}").__dict__)
+
+
+@bp.route('/getAiEvaluation', methods=['GET'])
+def getAiEvaluation():
+    """
+    AI面试评价
+    """
+    try:
+        interview_id = request.args.get('interview_id') if request.args.get('interview_id') else None
+        if interview_id is None:
+            return jsonify(Response.error("interview_id参数不能为空").__dict__)
+        result = ai_service.getAiEvaluation(interview_id)
+        return jsonify(Response.ok(result).__dict__)
+    except Exception as e:
+        return jsonify(Response.error(f"AI面试评价失败: {str(e)}").__dict__)

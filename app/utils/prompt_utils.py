@@ -160,3 +160,153 @@ class PromptUtils:
             ],
             "temperature": 0.7
         }
+
+    @staticmethod
+    def ai_evaluation_message(total_text):
+        """生成面试评价总结"""
+        return {
+            "model": "gpt-4o",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a seasoned technical interviewer and talent assessment expert with extensive "
+                               "technical background and experience in talent selection. You excel at deeply "
+                               "analyzing candidates' various abilities through interview dialogues and providing "
+                               "precise evaluations."
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                        I will provide you with a transcribed interview dialogue:
+                        ```
+                        {total_text}
+                        ```
+
+                        Assessment Requirements: 1. Deeply analyze the interview dialogue and extract key information 
+                        that reflects the candidate's various abilities. 2. Comprehensively evaluate the candidate's 
+                        performance based on professional requirements for the interview position. 3. When scoring, 
+                        use industry standards: 5 points for industry top-level, 3 points for industry average, 
+                        1 point for significant deficiency. 4. Maintain objectivity and fairness; base evaluations on 
+                        facts and dialogue content, avoiding subjective assumptions. 5. For each assessment 
+                        dimension, provide specific dialogue evidence and professional analysis.
+
+                        Assessment Dimensions: - managementAbility: Management capabilities, including team 
+                        management, task allocation, resource coordination, conflict handling, 
+                        etc. - overallEvaluation: Overall assessment combining all dimensions, clearly stating 
+                        whether to recommend hiring and the reasons - architectureThinking: Architectural thinking, 
+                        including system design, architectural planning, technology selection, scalability 
+                        considerations, etc. - technicalAbility: Technical capabilities, including programming 
+                        skills, algorithm understanding, technical depth, learning abilities, etc. - advantage: 
+                        Strengths, the candidate's outstanding merits and competitiveness - disadvantage: Weaknesses, 
+                        the candidate's shortcomings and areas for improvement - teamCooperation: Team collaboration, 
+                        including communication skills, cooperation awareness, conflict handling, 
+                        etc. - productThinking: Product thinking, including understanding user needs, business value 
+                        judgment, product improvement suggestions, etc. - activeDrive: Initiative, including 
+                        self-motivation, problem-solving enthusiasm, innovation spirit, etc.
+
+                        Output Requirements: 1. Fill in the blanks in my JSON template and return the complete 
+                        content to me. 2. Do not modify field names or add extra fields. 3. Directly return the 
+                        completed JSON object without adding markdown code block tags or other explanatory text. 4. 
+                        The summarize field must contain at least 50 characters of evaluation, providing substantive 
+                        analysis based on the interview content. If there is truly no relevant content, express this 
+                        diplomatically. 5. Ensure the score is consistent with the text evaluation (summarize) and 
+                        follows logical reasoning. 6. All content must be returned in Chinese language.
+
+                        Please fill in the following JSON template:
+                        {{
+                            "managementAbility": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "overallEvaluation": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "architectureThinking": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "technicalAbility": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "advantage": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "disadvantage": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "teamCooperation": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "productThinking": {{"summarize": "", "fullMarks": "5", "score": 0}},
+                            "activeDrive": {{"summarize": "", "fullMarks": "5", "score": 0}}
+                        }}"""
+                }
+            ],
+            "temperature": 0.7
+        }
+
+    @staticmethod
+    def interview_qa(total_text):
+        """面试问答总结"""
+        return {
+            "model": "gpt-4o",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are an experienced interviewer skilled at accurately extracting and summarizing "
+                               "every question and answer from interview content, without missing any important "
+                               "information."
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                        I will provide you with a transcribed interview dialogue:
+                        ```
+                        {total_text}
+                        ```
+
+                        Important Tasks:
+                        1. Carefully analyze the dialogue content and identify the roles of interviewer and interviewee.
+                        2. Segment the dialogue into logical topic sections based on content shifts or natural breaks in conversation.
+                        3. For each topic section, create a comprehensive summary, extract keywords, and formulate a descriptive title.
+                        4. Extract each question and corresponding answer in chronological order within each topic section.
+                        5. Identify even indirect or implied questions.
+                        6. Merge related Q&A under the same topic to avoid repetition or fragmentation.
+                        7. Ensure questions are expressed completely and clearly, and answers contain all key information provided by the interviewee.
+                        8. Remove fillers, repeated words, and other meaningless content from the Q&A while retaining all important information.
+
+                        Output Requirements:
+                        1. Return only pure JSON format, without any additional characters, marks, or explanations.
+                        2. Do not use markdown format, do not add ```json or ``` code block tags.
+                        3. The returned content must be a directly parsable valid JSON array.
+                        4. Group Q&A pairs by topics/themes that emerged during the interview.
+                        5. For each topic, provide a concise title, summary, and relevant keywords.
+                        6. Ensure each Q&A pair is complete; do not truncate question or answer content.
+                        7. Answers should accurately reflect the interviewee's original meaning without adding or removing key information.
+                        8. All content must be returned in Chinese language.
+
+                        Please return in the following JSON format:
+                        [
+                          {{
+                            "title": "话题标题",
+                            "summary": "该话题的简要总结，概述讨论的主要内容和见解",
+                            "keywords": ["关键词1", "关键词2", "关键词3"],
+                            "details": [
+                              {{
+                                "question": "问题内容",
+                                "answer": "回答内容"
+                              }}
+                            ]
+                          }}
+                        ]
+
+                        Complete example:
+                        [
+                          {{
+                            "title": "Vue与React框架的关键区别与使用场景对比",
+                            "summary": "Vue和React在数据绑定、性能优化和使用场景上存在显著区别。Vue采用双向数据绑定机制，简化了开发者对视图更新的处理，而React则采用单向数据流，通过虚拟DOM和异步渲染等技术提高性能。",
+                            "keywords": ["Vue", "React", "数据绑定", "双向数据绑定", "单项数据流", "性能优化", "虚拟DOM", "异步渲染"],
+                            "details": [
+                              {{
+                                "question": "你能简单说一下Vue和React中数据绑定的区别吗？",
+                                "answer": "Vue采用双向数据绑定机制，当数据变化时会自动更新模型，反之亦然，简化了开发者对视图手动更新的工作。而React则采用单向数据流，不允许直接更改组件的属性(props)，通常需要通过setState或其他事件方法来更新数据，这种设计虽然增加了开发复杂度，但有利于维护数据的一致性。"
+                              }},
+                              {{
+                                "question": "Vue和React在性能优化方面有什么不同策略？",
+                                "answer": "React通过虚拟DOM、异步渲染和Fiber架构等技术优化性能，支持懒加载和异步组件，有效提升用户体验，尤其是在大型应用中，React利用虚拟DOM减少页面操作次数，提高性能表现。相较于Vue，React在多线程渲染等方面的技术支持，使其在处理复杂应用时更为出色。Vue则提供了一种优化手段，比如懒加载异步组件以提升用户体验，但在大型应用程序中可能会遇到一些性能瓶颈。"
+                              }},
+                              {{
+                                "question": "这两个框架分别适合什么样的项目场景？",
+                                "answer": "Vue更适合中小型项目和快速原型开发，因其简单易用和快速响应；React则适用于大型应用和高交互的单页面应用，凭借其灵活性、强大的生态系统以及支持服务端渲染等技术，能处理更复杂的应用场景和数据流。Vue的学习曲线相对平缓，适合快速上手；而React则需要掌握更多概念，但能提供更强的可扩展性。"
+                              }}
+                            ]
+                          }}
+                        ]"""
+                }
+            ],
+            "temperature": 0.7
+        }
