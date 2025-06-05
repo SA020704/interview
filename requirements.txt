@@ -5,3 +5,5 @@ PyPDF2==3.0.1
 requests==2.31.0
 werkzeug==2.0.3
 sqlalchemy==1.4.23
+boto3
+python-dotenv

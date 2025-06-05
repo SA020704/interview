@@ -12,8 +12,10 @@ def create_app():
 
     from .controllers.interview_controller import bp as interview_bp
     from .controllers.ai_controller import bp as ai_bp
+    from .controllers.file_controller import bp as file_controller_bp
 
     app.register_blueprint(interview_bp, url_prefix='/api')
     app.register_blueprint(ai_bp, url_prefix='/ai')
+    app.register_blueprint(file_controller_bp, url_prefix='/file')
 
     return app

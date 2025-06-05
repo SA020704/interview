@@ -23,6 +23,7 @@ MANIFEST
 
 # 虚拟环境
 flask_env/
+.env
 
 # IDE - PyCharm
 .idea/
