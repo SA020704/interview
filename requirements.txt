@@ -8,3 +8,4 @@ sqlalchemy==1.4.23
 boto3
 python-dotenv
 aliyun-python-sdk-core==2.13.3
+pika

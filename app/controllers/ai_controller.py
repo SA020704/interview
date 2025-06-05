@@ -37,28 +37,17 @@ def analyze_resume():
         return jsonify(Response.error(f"简历分析失败: {str(e)}").__dict__), 500
 
 
-@bp.route('/interviewInit', methods=['POST'])
-def interview_init():
+@bp.route('/audioAnalysis', methods=['POST'])
+def analyze_audio():
     """
-    面试信息初始化
+    音频分析得到问题
     """
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify(Response.error("请求数据为空").__dict__), 400
-        job = data.get('job', '')
-        biographical_notes_response = data.get('biographicalNotesResponse', {})
-        if job != '' and biographical_notes_response:
-            resume_json = json.dumps(biographical_notes_response, ensure_ascii=False)
-            interview = interview_service.create_interview(
-                job=job,
-                interview_type=None,
-                resume=resume_json
-            )
-            return jsonify(Response.ok(interview.id).__dict__), 200
-        else:
-            return jsonify(Response.error("缺少必要参数").__dict__), 400
-    except ValueError as ve:
-        return jsonify(Response.error(str(ve)).__dict__), 400
+        user_id = request.form.get('user_id') if request.form.get('user_id') else 1
+        url = request.form.get('url') if request.form.get('url') else None
+        interview_id = request.form.get('interview_id') if request.form.get('interview_id') else None
+        result = ai_service.analyze_audio(url, user_id, interview_id)
+        return jsonify(Response.ok(result).__dict__)
+
     except Exception as e:
-        return jsonify(Response.error(f"面试信息初始化失败: {str(e)}").__dict__), 500
+        return jsonify(Response.error(f"简历分析失败: {str(e)}").__dict__), 500

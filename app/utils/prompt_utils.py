@@ -82,3 +82,81 @@ class PromptUtils:
             ],
             "temperature": 0.7
         }
+
+    @staticmethod
+    def get_audio_content_analysis_message(audio_content, interview):
+        """生成初始化问题的提示词"""
+        return {
+            "model": "gpt-4o",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a seasoned technical interviewer who excels at designing in-depth technical "
+                               "questions based on existing interview dialogue content. You can precisely assess "
+                               "candidates' professional abilities, project experience, and problem-solving "
+                               "approaches through your questions."
+                },
+                {
+                    "role": "user",
+                    "content": f"""
+                        I will provide you with the following interview information:
+                        1. A segment of interview dialogue transcribed from audio.
+                        2. The position the candidate is interviewing for.
+                        3. Some information extracted from the candidate's resume.
+
+                        Interview Information:
+                        ```
+                        Interview dialogue text:
+                        {audio_content}
+
+                        Candidate's basic information:
+                        Resume information: 
+                        {interview}
+                        ```
+
+                        Task Requirements: Based on the existing interview content, design 3 high-quality follow-up 
+                        questions that should: 1. PRIMARILY focus on topics already discussed in the conversation (
+                        this is the highest priority) 2. Explore deeper into the candidate's previous answers to 
+                        reveal their true technical level and practical experience 3. Include open-ended questions 
+                        that test the candidate's thinking patterns, problem-solving abilities and technical vision 
+                        4. Target specific technical points mentioned in the dialogue rather than general skills 5. 
+                        Set reasonable technical difficulty gradients that can distinguish the candidate's actual 
+                        ability level
+
+                        Content Analysis and Question Design Strategy: - First, identify topics that appear in BOTH 
+                        the dialogue and resume - these are prime candidates for deeper questions that combine both 
+                        sources - When a skill/technology is mentioned in both dialogue and resume, create questions 
+                        that leverage both the candidate's stated experience (resume) and their discussion points (
+                        dialogue) - For topics that ONLY appear in the dialogue, create questions based solely on the 
+                        conversation content - Only ask about resume-exclusive items if they are highly relevant to 
+                        the discussion context and there aren't enough dialogue topics to create 3 strong questions
+
+                        Important Priority Guidelines:
+                        - At least 2 of the 3 questions MUST be directly based on the interview dialogue content
+                        - When topics overlap between dialogue and resume, prioritize these for questioning
+                        - Avoid asking about resume items that have no connection to the ongoing conversation
+                        - Always phrase questions as natural follow-ups to what has already been discussed
+
+                        Question Type Guidelines: - Technical Depth: Explore specific technologies mentioned in the 
+                        dialogue to assess deep understanding - Application Context: Ask how they've applied concepts 
+                        from their conversation in real projects - Problem Solving: Present a problem scenario 
+                        connected to something mentioned in the conversation - Technical Decision: Ask about their 
+                        reasoning behind technical choices they've mentioned - Integration Questions: When a topic 
+                        appears in both resume and dialogue, ask how they've integrated this with other technologies 
+                        they know
+
+                        Output Requirements: 1. Return only pure string format, without any other characters, marks, 
+                        or explanations. 2. Return exactly three questions, separated by "/" character. 3. Questions 
+                        must be relevant to the interview information. Priority: dialogue content >>> resume 
+                        information. 4. Return content in Chinese language. 5. Each question must end with a question 
+                        mark (?). 6. Limit each question to 80 characters or less, keeping them concise and clear.
+
+                        Example output:
+                        你提到使用了微服务架构，能详细说明你是如何解决服务间通信问题的吗?/刚才你谈到的性能优化方案与你简历中提到的Redis缓存经验有何关联?/你在项目中是如何确保分布式系统的数据一致性的?
+
+                        Please help me generate the core interview questions I should ask next based on the above 
+                        content."""
+                }
+            ],
+            "temperature": 0.7
+        }
