@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+
 import pika
 
 from app.services.question_service import QuestionService
@@ -15,7 +17,11 @@ class InterviewAnalysisConsumer:
         """初始化消费者"""
         self.connection = None
         self.channel = None
-        self.queue_name = 'interview_analysis_queue'
+        self.queue_name = os.getenv('MQ_QUEUE_NAME')
+        self.mq_localhost = os.getenv('MQ_LOCALHOST')
+        self.mq_port = os.getenv('MQ_PORT')
+        self.mq_username = os.getenv('MQ_USERNAME')
+        self.mq_password = os.getenv('MQ_PASSWORD')
 
         # 初始化服务类
         self.question_service = QuestionService()
@@ -24,10 +30,10 @@ class InterviewAnalysisConsumer:
 
         # RabbitMQ连接参数
         self.connection_params = pika.ConnectionParameters(
-            host='localhost',
-            port=5672,
+            host=self.mq_localhost,
+            port=self.mq_port,
             virtual_host='/',
-            credentials=pika.PlainCredentials('admin', 'admin123')
+            credentials=pika.PlainCredentials(self.mq_username, self.mq_password)
         )
 
     def connect(self):

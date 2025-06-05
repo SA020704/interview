@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 from collections import defaultdict
 from datetime import datetime
@@ -140,17 +141,17 @@ class AIService:
     def _init_mq_connection(self):
         """初始化RabbitMQ连接"""
         try:
-            # RabbitMQ连接参数
+            self.queue_name = os.getenv('MQ_QUEUE_NAME')
+            self.mq_localhost = os.getenv('MQ_LOCALHOST')
+            self.mq_port = os.getenv('MQ_PORT')
+            self.mq_username = os.getenv('MQ_USERNAME')
+            self.mq_password = os.getenv('MQ_PASSWORD')
             self.connection_params = pika.ConnectionParameters(
-                host='localhost',  # RabbitMQ服务器地址
-                port=5672,  # RabbitMQ端口
-                virtual_host='/',  # 虚拟主机
-                credentials=pika.PlainCredentials('admin', 'admin123')  # 用户名密码
+                host=self.mq_localhost,
+                port=self.mq_port,
+                virtual_host='/',
+                credentials=pika.PlainCredentials(self.mq_username, self.mq_password)
             )
-
-            # 交换机和队列配置
-            self.queue_name = 'interview_analysis_queue'
-
             log.info("MQ连接参数初始化完成")
 
         except Exception as e:
