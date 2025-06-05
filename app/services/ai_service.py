@@ -138,6 +138,15 @@ class AIService:
             log.error(f"音频分析失败: {e}", exc_info=True)
             return {}
 
+    def getaAudioAnalysisRes(self, interview_id):
+        """获取AI得到的问题"""
+        try:
+            result = self.question_service.get_questions_by_interview_id(interview_id)
+            return [result[i:i + 3] for i in range(0, len(result), 3)]
+        except Exception as e:
+            log.error(f"获取AI得到的问题: {e}", exc_info=True)
+            return None
+
     def _init_mq_connection(self):
         """初始化RabbitMQ连接"""
         try:

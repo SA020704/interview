@@ -74,10 +74,11 @@ class QuestionDAO:
         :param interview_id: 面试ID
         :return: Question对象列表
         """
-        return Question.query.filter_by(
+        rows = Question.query.filter_by(
             interview_id=interview_id,
             deleted=Deleted.NO.value
         ).with_entities(Question.question).all()
+        return [row[0] for row in rows]
 
     @staticmethod
     def update(question_id: int, question_content: str) -> Optional[Question]:
