@@ -18,10 +18,12 @@ class Interview(db.Model):
     deleted = db.Column(db.Integer, default=Deleted.NO.value, comment='是否删除')
     user_id = db.Column(db.Integer)
     resume = db.Column(db.Text)
+    interview_evaluation = db.Column(db.Text)
 
-    def __init__(self, user_id=None, resume=None):
+    def __init__(self, user_id=None, resume=None, interview_evaluation=None):
         self.user_id = user_id
         self.resume = resume
+        self.interview_evaluation = interview_evaluation
 
     def to_dict(self):
         return {
@@ -29,5 +31,6 @@ class Interview(db.Model):
             'user_id': self.user_id,
             'resume': self.resume,
             'create_date_time': self.create_date_time.isoformat() if self.create_date_time else None,
-            'update_date_time': self.update_date_time.isoformat() if self.update_date_time else None
+            'update_date_time': self.update_date_time.isoformat() if self.update_date_time else None,
+            'interview_evaluation': self.interview_evaluation if self.interview_evaluation else None
         }

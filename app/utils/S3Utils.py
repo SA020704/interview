@@ -36,7 +36,7 @@ def _get_content_type(filename):
 
 def _is_audio_file(filename):
     """检查文件是否为音频文件"""
-    audio_extensions = {'.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.amr'}
+    audio_extensions = {'.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.amr', '.webm'}
     extension = os.path.splitext(filename)[1].lower()
     return extension in audio_extensions
 
@@ -85,6 +85,7 @@ class S3Utils:
                 file_path = file
                 original_filename = os.path.basename(file_path)
 
+                logger.info(f"_is_audio_file(original_filename)结果是:{_is_audio_file(original_filename)}")
                 if _is_audio_file(original_filename):
                     # 处理音频文件
                     return self._handle_audio_upload(s3_client, file_path, original_filename,

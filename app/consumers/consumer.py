@@ -13,6 +13,10 @@ log = logging.getLogger(__name__)
 
 
 class InterviewAnalysisConsumer:
+    """
+    消费者类，取出MQ队列中的消息并且进行分析。最后将分析结果入库
+    """
+
     def __init__(self):
         """初始化消费者"""
         self.connection = None

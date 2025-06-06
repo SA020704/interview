@@ -23,9 +23,9 @@ class FFmpegUtils:
 
         # 根据操作系统设置默认路径
         if os.name == 'nt':  # Windows
-            default_path = "D:\\Software\\ffmpeg-7.0.2-essentials_build\\bin\\ffmpeg.exe"
+            default_path = os.getenv('WINDOWS_PATH')
         else:  # Linux/macOS
-            default_path = "/usr/local/bin/ffmpeg"
+            default_path = os.getenv('MAC_PATH')
 
         # 首先尝试默认路径
         if os.path.isfile(default_path):
@@ -58,9 +58,9 @@ class FFmpegUtils:
 
         # 根据操作系统设置默认路径
         if os.name == 'nt':  # Windows
-            default_path = "D:\\Software\\ffmpeg-7.0.2-essentials_build\\bin\\ffprobe.exe"
+            default_path = os.getenv('WINDOWS_PATH')
         else:  # Linux/macOS
-            default_path = "/usr/local/bin/ffprobe"
+            default_path = os.getenv('MAC_PATH')
 
         # 首先尝试默认路径
         if os.path.isfile(default_path):

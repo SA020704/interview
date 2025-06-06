@@ -40,7 +40,7 @@ def analyze_resume():
 @bp.route('/audioAnalysis', methods=['POST'])
 def analyze_audio():
     """
-    音频分析得到问题
+    音频分析得到问题(这一步仅仅是将音频转文字并且放入MQ中等待消费者进行处理)
     """
     try:
         user_id = request.form.get('user_id') if request.form.get('user_id') else 1
@@ -56,7 +56,7 @@ def analyze_audio():
 @bp.route('/getaAudioAnalysisRes', methods=['GET'])
 def getaAudioAnalysisRes():
     """
-    获取AI得到的问题
+    获取AI分析出的问题
     """
     try:
         interview_id = request.args.get('interview_id') if request.args.get('interview_id') else None

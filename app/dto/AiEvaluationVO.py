@@ -1,9 +1,12 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
+from dataclasses_json import dataclass_json
+
 from app.dto import DetailsDto, QADetailVO
 
 
+@dataclass_json
 @dataclass
 class AiEvaluationVO:
     """AI评价结果"""

@@ -27,7 +27,7 @@ class AIService:
         self.aLYAudioConversionUtil = ALYAudioConversionUtil()
 
         self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
-        self.MIN_ANALYSIS_LENGTH = 150
+        self.MIN_ANALYSIS_LENGTH = 80
         # 线程安全的面试对话文本累积集合,用于AI分析给出三道题目
         self._user_text_accumulator = defaultdict(str)
         # 面试整场对话的文本积累结合，用于最后的面试总结等
@@ -144,7 +144,20 @@ class AIService:
         """获取AI得到的问题"""
         try:
             result = self.question_service.get_questions_by_interview_id(interview_id)
-            return [result[i:i + 3] for i in range(0, len(result), 3)]
+            total = [result[i:i + 3] for i in range(0, len(result), 3)]
+            question_vo = {
+                'current': [],
+                'history': []
+            }
+            if total:
+                # 最后一组放到current
+                question_vo['current'] = total[-1]
+
+                # 其他组放到history
+                if len(total) > 1:
+                    question_vo['history'] = total[:-1]
+
+            return question_vo
         except Exception as e:
             log.error(f"获取AI得到的问题: {e}", exc_info=True)
             return None
@@ -154,34 +167,43 @@ class AIService:
         AI面试评价
         """
         try:
-            total_text = self._user_text_total[interview_id].strip()
+            interview = self.interview_service.get_interview(interview_id)
+
+            # 检查评价是否已存在
+            if interview is not None and interview.interview_evaluation is not None:
+                try:
+                    existing_evaluation = AiEvaluationVO.from_json(interview.interview_evaluation)
+                    return existing_evaluation
+                except Exception as e:
+                    log.warning(f"解析已存在的评价失败: {e}")
+
+            if interview is None:
+                return AiEvaluationVO()
+
+            total_text = self._user_text_total.get(interview_id, "").strip()
             res = AiEvaluationVO()
 
             if total_text and total_text.strip():
-                if len(total_text) > 30000:
-                    total_text = total_text[:30000]  # 防止超过AI上下文最大长度
+                if len(total_text) > 15000:
+                    total_text = total_text[:15000]
 
-                # 使用线程池并发执行两个AI任务
                 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
-                    # 提交两个任务
-                    evaluation_future = executor.submit(
-                        self._get_ai_evaluation_task,
-                        total_text
-                    )
-                    qa_future = executor.submit(
-                        self._get_interview_qa_task,
-                        total_text
-                    )
+                    evaluation_future = executor.submit(self._get_ai_evaluation_task, total_text)
+                    qa_future = executor.submit(self._get_interview_qa_task, total_text)
 
-                    # 等待两个任务完成
                     try:
-                        ai_evaluation_result = evaluation_future.result(timeout=30)  # 30秒超时
-                        interview_qa_result = qa_future.result(timeout=30)  # 30秒超时
+                        ai_evaluation_result = evaluation_future.result(timeout=30)
+                        interview_qa_result = qa_future.result(timeout=30)
 
-                        # 解析并合并结果
                         res = ChatGptUtils.parse_combined_response(ai_evaluation_result, interview_qa_result)
-                        # 总结完成后清空对话内容
-                        self._user_text_total[interview_id] = ""
+
+                        if res and interview:
+                            interview.interview_evaluation = res.to_json()
+                            self.interview_service.update_interview(interview)
+
+                        if interview_id in self._user_text_total:
+                            del self._user_text_total[interview_id]
+
                     except concurrent.futures.TimeoutError:
                         log.error(f"AI任务执行超时: interview_id={interview_id}")
                         return AiEvaluationVO()

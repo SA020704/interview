@@ -1,4 +1,5 @@
 import json
+import os
 from typing import Optional, List
 
 import requests
@@ -13,8 +14,8 @@ from app.dto.QAVO import QAVO
 
 class ChatGptUtils:
     def __init__(self):
-        self.gpt_proxy = "Online-Exam-Evan-Proxy"
-        self.api_url = "https://openai.masonvips.com/proxy/v1/chat/completions"
+        self.gpt_proxy = os.getenv('GPT_PROXY_KEY')
+        self.api_url = os.getenv('GPT_API_URL')
 
     def proxy_ms_api(self, params):
         """茂松代理Api接口"""

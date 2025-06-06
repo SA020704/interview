@@ -10,6 +10,9 @@ class InterviewService:
     def get_interview(self, interview_id: int) -> Optional[Interview]:
         return self.interview_dao.get_interview(interview_id)
 
+    def update_interview(self, interview: Interview):
+        return self.interview_dao.update_interview(interview)
+
     def get_all_interviews(self) -> List[Interview]:
         return self.interview_dao.get_all_interviews()
 
