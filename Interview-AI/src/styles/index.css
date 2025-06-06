@@ -1,0 +1,102 @@
+/* 全局样式 */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 主题色变量 */
+:root {
+    --primary-color: #409EFF;
+    --success-color: #67C23A;
+    --warning-color: #E6A23C;
+    --danger-color: #F56C6C;
+    --info-color: #909399;
+}
+
+/* 自定义类 */
+.container-fluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.touch-friendly {
+    padding: 12px;
+    margin: 5px 0;
+}
+
+/* 响应式布局 */
+@media screen and (max-width: 991px) {
+    .interview-mobile-layout {
+        flex-direction: column;
+    }
+}
+
+.responsive-table {
+    overflow-x: auto;
+}
+
+@media screen and (max-width: 767px) {
+    .responsive-table {
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .responsive-form .el-form-item {
+        margin-bottom: 12px;
+    }
+}
+
+/* 扩展类 */
+.app-container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.el-menu-item {
+    padding: 12px;
+    margin: 5px 0;
+}
+
+.interview-execution {
+    /* 继承自interview-mobile-layout */
+}
+
+@media screen and (max-width: 991px) {
+    .interview-execution {
+        flex-direction: column;
+    }
+}
+
+.data-table {
+    overflow-x: auto;
+}
+
+@media screen and (max-width: 767px) {
+    .data-table {
+        font-size: 12px;
+    }
+}
+
+.mobile-form {
+    /* 继承自responsive-form */
+}
+
+@media screen and (max-width: 767px) {
+    .mobile-form .el-form-item {
+        margin-bottom: 12px;
+    }
+}

@@ -1,0 +1,136 @@
+/* 响应式辅助类 */
+/* 断点: xs - 480px, sm - 768px, md - 992px, lg - 1200px, xl - 1600px */
+
+/* 大于等于指定屏幕尺寸的媒体查询 */
+/* xs */
+@media screen and (min-width: 480px) {
+    /* 这里放入样式 */
+}
+
+/* sm */
+@media screen and (min-width: 768px) {
+    /* 这里放入样式 */
+}
+
+/* md */
+@media screen and (min-width: 992px) {
+    /* 这里放入样式 */
+}
+
+/* lg */
+@media screen and (min-width: 1200px) {
+    /* 这里放入样式 */
+}
+
+/* xl */
+@media screen and (min-width: 1600px) {
+    /* 这里放入样式 */
+}
+
+/* 小于指定屏幕尺寸的媒体查询 */
+/* xs */
+@media screen and (max-width: 479px) {
+    /* 这里放入样式 */
+}
+
+/* sm */
+@media screen and (max-width: 767px) {
+    /* 这里放入样式 */
+}
+
+/* md */
+@media screen and (max-width: 991px) {
+    /* 这里放入样式 */
+}
+
+/* lg */
+@media screen and (max-width: 1199px) {
+    /* 这里放入样式 */
+}
+
+/* xl */
+@media screen and (max-width: 1599px) {
+    /* 这里放入样式 */
+}
+
+/* 介于两个断点之间的媒体查询示例 */
+/* xs 到 sm */
+@media screen and (min-width: 480px) and (max-width: 767px) {
+    /* 这里放入样式 */
+}
+
+/* sm 到 md */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    /* 这里放入样式 */
+}
+
+/* md 到 lg */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    /* 这里放入样式 */
+}
+
+/* lg 到 xl */
+@media screen and (min-width: 1200px) and (max-width: 1599px) {
+    /* 这里放入样式 */
+}
+
+/* 隐藏辅助类 */
+@media screen and (min-width: 480px) {
+    .hidden-xs-up {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .hidden-xs-down {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .hidden-sm-up {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .hidden-sm-down {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .hidden-md-up {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .hidden-md-down {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .hidden-lg-up {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .hidden-lg-down {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    .hidden-xl-up {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 1599px) {
+    .hidden-xl-down {
+        display: none !important;
+    }
+}
