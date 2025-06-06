@@ -9,6 +9,7 @@
 - 消息队列：RabbitMQ
 - AI 服务：ChatGPT API
 - 文件存储：AWS S3
+- 音视频处理：FFmpeg
 
 ## 项目结构
 ```
@@ -27,7 +28,7 @@ my_flask_app/
 └── worldai.sql           # 数据库结构
 ```
 
-## 安装步骤
+## 使用步骤
 
 1. 克隆项目
 ```bash
@@ -47,8 +48,25 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-4. 配置环境变量
-创建 `.env` 文件并配置以下参数：
+4. 初始化数据库(Mysql)
+```
+下载安装MYSQL:https://www.mysql.com/cn 
+(个人推荐用小皮面板中自带的MYSQL环境)
+创建数据库worldAI并且导入数据库表结构 my_flask_app/worldai.sql
+```
+
+5. 下载ffmpeg
+```
+https://ffmpeg.org/
+```
+
+6. 安装RabbitMQ(个人推荐使用docker安装)
+```
+https://www.rabbitmq.com/
+```
+
+7. 配置环境变量
+创建 `.env` 文件并配置自己对应的参数：
 ```
 #亚马逊S3云存储
 AWS_ACCESS_KEY_ID=xxx
@@ -84,18 +102,10 @@ GPT_PROXY_KEY=xxx
 GPT_API_URL=xxx
 ```
 
-5. 初始化数据库
-```
-导入数据库表结构 my_flask_app/worldai.sql
-```
-
-## 启动项目
-
-1. 启动 Flask 应用
+8. 启动 Flask 应用
 ```bash
 python run.py
 ```
-
 
 ## 系统流程
 
@@ -105,44 +115,8 @@ python run.py
 ### 2. 面试评估流程
 ![img_1.png](img_1.png)
 
-## API 接口
-
-### 1. 简历分析
-- POST `/ai/ResumeAnalysis`
-  - 功能：分析简历内容
-  - 参数：简历文件
-  - 返回：简历分析结果和面试问题
-
-### 2. 面试管理
-- GET `/interview/list`
-  - 功能：获取面试列表
-  - 参数：用户ID
-  - 返回：面试记录列表
-
-- POST `/interview/create`
-  - 功能：创建面试记录
-  - 参数：用户ID、简历内容
-  - 返回：面试记录ID
-
-- POST `/interview/answer`
-  - 功能：提交面试回答
-  - 参数：面试ID、录音文件
-  - 返回：处理状态
-
-- GET `/interview/result`
-  - 功能：获取面试评估结果
-  - 参数：面试ID
-  - 返回：评估结果
-
-### 3. 文件管理
-- POST `/v1/files/single`
-  - 功能：上传文件到S3
-  - 参数：文件
-  - 返回：文件URL
-
 ## 注意事项
 
 1. 确保已安装并启动 MySQL 服务
 2. 确保已安装并启动 RabbitMQ 服务
-3. 配置正确的 AWS S3 凭证
-4. 必须要.env文件，并且填好自己对应的信息
+3. 必须要.env文件，并且填好自己对应的信息
